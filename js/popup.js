@@ -1,4 +1,11 @@
 $(function () {
+  var url="";
+  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    url = tabs[0].url;
+    console.log(url);
+  });
+
+
 
   var currentUserRating = 0;
   // ------------ Start Utility Functions -------------
