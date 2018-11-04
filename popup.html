@@ -36,18 +36,18 @@
       </div>
       <h3>Welcome to Bias Checker!</h3>
       <div class="row">
-          <p class="text-right"> This source's bias score is: </p>
-          <h3 class="text-center"></h3>
+          <p class="text-right" id="source-label"></p>
+          <h3 class="text-center" id="host-bias"></h3>
       </div>
       <div class="row">
-          <p class="text-right"> This article's crowdsourced bias score is: </p>
+          <p class="text-right" id="article-label"></p>
           <h3 class="text-center"></h3>
       </div>
       <div class="divider"></div>
       <h3 class="text-center"> Add your input:</h3>
       <!-- Start Plus Button-->
         
-      </div>
+      
       <div class="row">
         <div class="col-xs-12">
           <h1 class="text-center change-button">
@@ -61,7 +61,8 @@
       <div class="row">
         <div class="col-xs-12">
           <h6 class="text-center">
-            <p> Rating</p>
+            <p id="current-crowdsource-rating"></p>
+            <p id="current-vote-count"></p>
           </h6>
           <h2 class="text-center"></h2>
           <p class="text-center"></p>
@@ -78,14 +79,7 @@
         </div>
       </div>
       <!-- Finish Minus Button-->
-
-<<<<<<< HEAD
-</div>
-</head>
-<body></body>
-=======
     </div>
   </body>
->>>>>>> 29524a3a99023890d5c83ff28454fe8147532c85
 </html>
 

@@ -1,24 +1,23 @@
 $(function () {
-<<<<<<< HEAD
   var url="";
   chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     url = tabs[0].url;
     console.log(url);
   });
 
-
-=======
-  // firebase.database().ref('/articles/').once('value').then(function(snapshot) {
-  //   var username = (snapshot.val());
-  //   console.log(username);
-  // });
-  
-  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-    var url = tabs[0].url;
-    console.log(url);
-    document.getElementById("myText").innerHTML = url;
-  });
->>>>>>> 555dc63f9abd6b33133cd88e51f69e6f3dbd1f30
+  function processUrl(){
+    const myUrl = new URL(url);
+    var myHostname = myUrl.hostname;
+    var hostnameKey = myHostname.replace(/\.|$|\[|]|#|\//g, '');
+    var myPathname = myUrl.pathname;
+    var pathnameKey = myPathname.replace(/\.|$|\[|]|#|\//g, '');
+    return (
+      {
+        articleKey: keyHostname + keyPathname,
+        hostnameKey,
+      }
+    );
+  };
 
   var currentUserRating = 0;
   // ------------ Start Utility Functions -------------
@@ -26,27 +25,68 @@ $(function () {
     return window.firebase_database.ref('/articles');
   }
 
-  function bindValueToRating() {
-    //currentArticleRef().has
-    data = data.val();
-    var currentRating = data.crowdSourceBias;
-    var votes = data.votes;
-    console.log('votes', votes);
-    console.log('rating', currentRating);
-    const noRatingText = "No Votes Yet"
-    var ratingsExist = (votes !== 0);
-    
+  function bindValuesToHtmlTags() {
     $('#app').show();
-    $('#current-crowdsource-rating').text(ratingsExist ? currentRating : noRatingText);
-    $('#current-crowdsource-rating').css("color", getRatingColor(currentRating));
-    if (ratingsExist){
-      $('#current-vote-count').text(votes + 'have been submitted');
+    //check if the source is in the database
+    if (currentArticleRef() === null){
+      $('#source-label').text("This publication doesn't have a bias score yet.");
+      // display donkey and elephant
+    } else {
+      //source is in database- show source bias score
+      $('#source-label').text("This publication's bias score is: ");
+      currentArticleRef().child(hostBias).once("value").then(function(data){
+        $('#host-bias').text(data.val());
+      });
+      //get value for votes
+      currentArticleRef().child(votes).once("value").then(function(data){
+        //check if there are votes
+        if (data.val() !== 0){
+          $('#current-vote-count').text(data.val() + 'votes have been submitted');
+          //get current crowdsourced score- dispaly + set color
+          currentArticleRef().child(crowdSourceBias).once("value").then(function(crowd_data){
+            $('#current-crowdsource-rating').text(crowd_data.val());
+            $('#article-label').text("This article's crowdsourced bias score is: ");
+            $('#current-crowdsource-rating').css("color", getRatingColor(crowd_data.val()));
+          });
+        } else {  //no votes
+          $('#current-crowdsource-rating').text("No Votes Yet");
+        }
+      });
     }
   }
-  // Insert logic to get URL hostname + pathname
+
   function currentArticleRef() {
-    const currentArticleStr = moment().format('YYYY-MM-DD'); // here
-    return firebaseRef().child(currentArticleStr);
+    const currentArticle = processUrl();
+    if (firebaseRef().child(currentArticle.articleKey).exists()){
+      return firebaseRef().child(currentArticle.articleKey);
+    } else {
+      if (checkForExistingSource(currentArticle.hostnameKey) !== null){
+        return addArticle(articleKey, checkForExistingSource(currentArticle.hostnameKey));
+      } else {
+        return null;
+      }
+    }
+  }
+
+  function checkForExistingSource(hostnameKey){
+    var keyToCheck = "sources/" + hostnameKey;
+    var ref = firebase.databse.ref(keyToCheck);
+    ref.once("value").then(function(snapshot) {
+      if(snapshot.exists()){
+        return snapshot.val();
+      } else {
+        return null;
+      }
+    });
+  }
+
+  function addArticle(articleKey, hostBiasVal){
+    firebase.database().ref('articles/' + articleKey).set({
+      hostBias: hostBiasVal,
+      crowdSourceBias: null,
+      votes: 0
+    });
+    return firebase.database().ref('articles/'+ articleKey);
   }
 
   function getRatingColor(rating){
