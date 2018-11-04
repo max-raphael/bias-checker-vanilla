@@ -4,10 +4,9 @@ $( document ).ready(function() {
     // ------------START URL FUNCTION -------------
     //add event listener
         console.log("1");
-        var globalurl = "";
-        getCurrentTabUrl(function(globalurl){
+        getCurrentTabUrl(function(url){
             console.log("2");
-            getTabSource(globalurl, function(hostName, pathName){
+            getTabSource(url, function(hostName, pathName){
                 console.log("3");
                 if (hostName !== null && pathName!== null){
                     console.log("4");
@@ -19,18 +18,19 @@ $( document ).ready(function() {
 
 
 
-    function getCurrentTabUrl(callback){
+    async function getCurrentTabUrl(callback){
         var queryInfo = {
             active: true,
             currentWindow: true
         };
 
-        chrome.tabs.query(queryInfo, function(tabs){
-            globalurl = tabs[0].url;
-            console.log(globalurl);
+        await chrome.tabs.query(queryInfo, function(tabs){
+            url = tabs[0].url;
+            console.log(url);
+            callback(url);
         });
 
-        callback(globalurl);
+        
     }
 
     function getTabSource(url,callback){
@@ -39,9 +39,9 @@ $( document ).ready(function() {
         callback(hostName, path);
     }
 
-    var getHostName() {
+    var getHostName = function (url) {
         try {
-          return new URL(globalurl).hostname.match(/(www[0-9]?\.)?(.+)/i)[2];
+          return new URL(url).hostname.match(/(www[0-9]?\.)?(.+)/i)[2];
         } catch (e) {
           return null; // Invalid URL
         }
@@ -68,22 +68,26 @@ $( document ).ready(function() {
   
     // ------------END URL FUNCTION -------------
     
-    function pageLoad(hostName, pathName){
+    async function pageLoad(hostName, pathName){
         //get the url
         const currentArticle = processUrl(hostName, pathName);
+        console.log(currentArticle.articleKey);
+        console.log(currentArticle.hostnameKey);
         //is the source in the database?
-        var sourceInDatabase = checkForExistingSource(currentArticle.hostnameKey);
+        var sourceInDatabase = await checkForExistingSource(currentArticle.hostnameKey);
+        console.log(sourceInDatabase);
+
         if (sourceInDatabase){
             //source is in the database. Is the article in the database?
-            var articleInDatabase = checkForExistingArticle(currentArticle.articleKey);
+            var articleInDatabase = await checkForExistingArticle(currentArticle.articleKey);
             if (!articleInDatabase){
                 //article is not in the database.
                 var sourceBias = getSourceBias(currentArticle.hostnameKey);
-                addArticle(currentArticle.articleKey, sourceBias);
+                await addArticle(currentArticle.articleKey, sourceBias);
             } //at this point, there is no difference 
-            var votes = getVotes(currentArticle.articleKey);
-            var crowdSourceScore = getCrowdsourceScore(currentArticle.articleKey);
-            var hostBias = getHostBias(currentArticle.articleKey);
+            var votes = await getVotes(currentArticle.articleKey);
+            var crowdSourceScore = await getCrowdsourceScore(currentArticle.articleKey);
+            var hostBias = await getHostBias(currentArticle.articleKey);
             bindExistingArticle(hostBias, votes, crowdSourceScore);
         } else {
            bindNoArticle();
@@ -92,32 +96,36 @@ $( document ).ready(function() {
     
      // ------------ Start Utility Functions -------------
 
-    function checkForExistingSource(hostnameKey){
+    async function checkForExistingSource(hostnameKey){
         var keyToCheck = "sources/" + hostnameKey;
-        var ref = firebase.database().ref(keyToCheck).once("value").then(function(snapshot){
-            return (snapshot.exists()); //bool
+        var boolean = false;
+        var ref = await firebase.database().ref(keyToCheck).once("value").then(function(snapshot){
+            console.log(snapshot);
+            console.log(snapshot.exists());
+            boolean = snapshot.exists()//bool
         });
+        return boolean;
     }
 
     function firebaseRef () {
         return window.firebase.database().ref('/articles');
       }
 
-    function checkForExistingArticle(articleKey){
+    async function checkForExistingArticle(articleKey){
         firebaseRef().child(articleKey).once("value").then(function(data){
             return (data.exists()); //bool
         });
     }
 
-    function getSourceBias(hostnameKey){
+    async function getSourceBias(hostnameKey){
         var keyToCheck = "sources/" + hostnameKey;
-        var ref = firebase.database().ref(keyToCheck).once("value").then(function(snapshot){
+        var ref = await firebase.database().ref(keyToCheck).once("value").then(function(snapshot){
             return (snapshot.val()); //host bias score, integer
         });
     }
 
-    function addArticle(articleKey, hostBiasVal){
-        window.firebase.database().ref('articles/' + articleKey).set({
+    async function addArticle(articleKey, hostBiasVal){
+        await window.firebase.database().ref('articles/' + articleKey).set({
           hostBias: hostBiasVal,
           crowdSourceBias: 0,
           votes: 0
@@ -131,14 +139,17 @@ $( document ).ready(function() {
         });
     }
 
-    function getCrowdsourceScore(){
+    async function getCrowdsourceScore(articleKey){
+        console.log("gcs1")
+        returnData = 0;
         var keyString = articleKey + '/crowdSourceBias';
-        firebaseRef().child(keyString).once("value").then(function(data){
-            return data.val();
+        await firebaseRef().child(keyString).once("value").then(function(data){
+            returnData = data.val();
         });
+        return returnData;
     }
 
-    function getHostBias(){
+    function getHostBias(articleKey){
         var keyString = articleKey + '/hostBias';
         firebaseRef().child(keyString).once("value").then(function(data){
             return data.val();
