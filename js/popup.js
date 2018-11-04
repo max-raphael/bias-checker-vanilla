@@ -1,4 +1,5 @@
 $(function () {
+<<<<<<< HEAD
   var url="";
   chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     url = tabs[0].url;
@@ -6,6 +7,18 @@ $(function () {
   });
 
 
+=======
+  // firebase.database().ref('/articles/').once('value').then(function(snapshot) {
+  //   var username = (snapshot.val());
+  //   console.log(username);
+  // });
+  
+  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    var url = tabs[0].url;
+    console.log(url);
+    document.getElementById("myText").innerHTML = url;
+  });
+>>>>>>> 555dc63f9abd6b33133cd88e51f69e6f3dbd1f30
 
   var currentUserRating = 0;
   // ------------ Start Utility Functions -------------
@@ -14,7 +27,7 @@ $(function () {
   }
 
   function bindValueToRating() {
-    currentArticleRef().has
+    //currentArticleRef().has
     data = data.val();
     var currentRating = data.crowdSourceBias;
     var votes = data.votes;
@@ -25,6 +38,7 @@ $(function () {
     
     $('#app').show();
     $('#current-crowdsource-rating').text(ratingsExist ? currentRating : noRatingText);
+    $('#current-crowdsource-rating').css("color", getRatingColor(currentRating));
     if (ratingsExist){
       $('#current-vote-count').text(votes + 'have been submitted');
     }
@@ -33,6 +47,24 @@ $(function () {
   function currentArticleRef() {
     const currentArticleStr = moment().format('YYYY-MM-DD'); // here
     return firebaseRef().child(currentArticleStr);
+  }
+
+  function getRatingColor(rating){
+    if (rating < -7){
+      return "Navy";
+    } else if (rating < -4){
+      return "Blue";
+    } else if ( rating < 0){
+      return "LightSkyBlue";
+    } else if (rating == 0) {
+      return "Green";
+    } else if (rating < 4){
+      return "Salmon";
+    } else if (rating < 7){
+      return "Red";
+    } else {
+      return "DarkRed";
+    }
   }
 
   function updateRatingOnFirebase(rating) {
@@ -53,11 +85,15 @@ $(function () {
   }
 
   function addUserRating() {
-    currentUserRating = currentUserRating + 0.5;
+    if (currentUserRating <= 9.5){
+      currentUserRating = currentUserRating + 0.5;
+    }
   }
 
   function subtractUserRating() {
-    currentUserRating = currentUserRating - 0.5;
+    if (currentUserRating >= -9.5){
+      currentUserRating = currentUserRating - 0.5;
+    }
   }
 
   function userSubmitsRating() {
