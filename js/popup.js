@@ -1,15 +1,48 @@
 $(function () {
-  var url=chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
-    url = tabs[0].url;
-    console.log(url);
-    return url;
+  var url1 = "";
+
+  // function getCurrentTabUrl(callback) {
+  //   // Query filter to be passed to chrome.tabs.query - see
+  //   // https://developer.chrome.com/extensions/tabs#method-query
+  //   var queryInfo = {
+  //     active: true,
+  //     currentWindow: true
+  //   };
+  
+  //   browser.tabs.query(queryInfo, function(tabs) {
+
+  //     var tab = tabs[0];
+
+  //     var url = tab.url;
+  
+  //     console.assert(typeof url == 'string', 'tab.url should be a string');
+  
+  //     callback(url);
+  //   });
+  // }
+  chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
+    var url2 = tabs[0].url;
+    console.log(url2);
+    url1 = url2;
   });
-  const myUrl = new URL(url, base=String);
+
+  console.log(url1);
+  //Create a new link with the url as its href:
+  var a = $('<a>', {
+      href: url1
+  });
+
   function processUrl(){
-    var myHostname = myUrl.hostname;
+    var myHostname = a.prop('hostname');
+    console.log(myHostname);
     var hostnameKey = myHostname.replace(/\.|$|\[|]|#|\//g, '');
-    var myPathname = myUrl.pathname;
+    var myPathname = a.prop('pathname');
+    console.log(myPathname);
     var pathnameKey = myPathname.replace(/\.|$|\[|]|#|\//g, '');
+    console.log(myHostname);
+    console.log(myPathname);
+    console.log(hostnameKey + pathnameKey);
+    console.log(hostnameKey);
     return (
       {
         articleKey: hostnameKey + pathnameKey,
@@ -60,7 +93,7 @@ $(function () {
 
   function currentArticleRef() {
     const currentArticle = processUrl();
-    console.log(currentArticle.articleKey);
+    //console.log(currentArticle.articleKey);
     firebaseRef().child(currentArticle.articleKey).once("value").then(function(data){
       var articleInDatabase = data.val();
       if (articleInDatabase !== null){
@@ -154,7 +187,7 @@ $(function () {
       currentUserRating = currentUserRating - 0.5;
     }
   }
-
+  console.log(url1);
   function userSubmitsRating() {
     updateRatingOnFirebase(currentUserRating);
   }
