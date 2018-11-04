@@ -1,20 +1,19 @@
 $(function () {
-  var url="";
+  var url="https://firebase.google.com/docs/database/rest/retrieve-data";
   chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     url = tabs[0].url;
     console.log(url);
   });
-
+  const myUrl = new URL(url);
   function processUrl(){
-    const myUrl = new URL(url);
     var myHostname = myUrl.hostname;
     var hostnameKey = myHostname.replace(/\.|$|\[|]|#|\//g, '');
     var myPathname = myUrl.pathname;
     var pathnameKey = myPathname.replace(/\.|$|\[|]|#|\//g, '');
     return (
       {
-        articleKey: keyHostname + keyPathname,
-        hostnameKey,
+        articleKey: hostnameKey + pathnameKey,
+        hostnameKey
       }
     );
   };
@@ -22,7 +21,7 @@ $(function () {
   var currentUserRating = 0;
   // ------------ Start Utility Functions -------------
   function firebaseRef () {
-    return window.firebase_database.ref('/articles');
+    return window.firebase.database().ref('/articles');
   }
 
   function bindValuesToHtmlTags() {
@@ -61,20 +60,36 @@ $(function () {
 
   function currentArticleRef() {
     const currentArticle = processUrl();
-    if (firebaseRef().child(currentArticle.articleKey).exists()){
-      return firebaseRef().child(currentArticle.articleKey);
-    } else {
-      if (checkForExistingSource(currentArticle.hostnameKey) !== null){
-        return addArticle(articleKey, checkForExistingSource(currentArticle.hostnameKey));
+    console.log(currentArticle.articleKey);
+    firebaseRef().child(currentArticle.articleKey).once("value").then(function(data){
+      var articleInDatabase = data.val();
+      if (articleInDatabase !== null){
+        console.log(articleInDatabase);
+        return articleInDatabase;
       } else {
-        return null;
+        if (checkForExistingSource(currentArticle.hostnameKey) !== null){
+          console.log("source is good, article to be added");
+          return addArticle(articleInDatabase, checkForExistingSource(currentArticle.hostnameKey));
+        } else {
+          console.log("this source isnt good");
+          return null;
+        }
       }
-    }
+    });
+    // if (firebaseRef().child(currentArticle.articleKey).exists()){
+    //   return firebaseRef().child(currentArticle.articleKey);
+    // } else {
+    //   if (checkForExistingSource(currentArticle.hostnameKey) !== null){
+    //     return addArticle(articleKey, checkForExistingSource(currentArticle.hostnameKey));
+    //   } else {
+    //     return null;
+    //   }
+    // }
   }
 
   function checkForExistingSource(hostnameKey){
     var keyToCheck = "sources/" + hostnameKey;
-    var ref = firebase.databse.ref(keyToCheck);
+    var ref = firebase.database().ref(keyToCheck);
     ref.once("value").then(function(snapshot) {
       if(snapshot.exists()){
         return snapshot.val();
@@ -85,7 +100,7 @@ $(function () {
   }
 
   function addArticle(articleKey, hostBiasVal){
-    firebase.database().ref('articles/' + articleKey).set({
+    window.firebase.database().ref('articles/' + articleKey).set({
       hostBias: hostBiasVal,
       crowdSourceBias: null,
       votes: 0
@@ -147,7 +162,7 @@ $(function () {
 
   // ------------ Start Getting to Business -------------
   // currentArticleRef().on('value', bindValueToRating);
-
+  bindValuesToHtmlTags();
   $('#plus-button').click(addUserRating);
   $('#minus-button').click(subtractUserRating);
   $('#submit-button').click(userSubmitsRating);
