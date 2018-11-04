@@ -178,7 +178,7 @@ $(function () {
     function getAbsValue(rating) {
         return ((rating >= 0) ? rating : (-1 * rating));
     }
-
+    
     function getRatingColor(rating){
         if (rating < -7){
           return "Navy";
