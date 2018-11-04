@@ -1,39 +1,41 @@
 //JQuery function
 $(function () {
 
-    // ------------START URL FUNCTION -------------
-    //add event listener
-    document.addEventListener('DOMContentLoaded', function(){
-        getCurrentTabUrl(function(url){
-            getTabSource(url, function(hostName, pathName){
-                if (hostName !== null && pathName!== null){
-                    pageLoad(hostName, pathName); 
-                }
-            });
+    console.log('function running');
+    getCurrentTabUrl(function(url){
+        getTabSource(url, function(hostName, pathName){
+            if (hostName !== null && pathName!== null){
+                pageLoad(hostName, pathName); 
+            }
         });
     });
 
     function getCurrentTabUrl(callback){
+        console.log("getCurrentTabUrl entered:");
         var queryInfo = {
             active: true,
             currentWindow: true
         };
-
-        browser.tabs.query(queryInfo, function(tabs){
-            var tab = tab[0];
-            var url = tab.url;
+        chrome.tabs.query(queryInfo, function(tabs){
+            var tab = tabs[0];
+            var url = tabs[0].url;
+            console.log("url", url);
+            callback(url);
         });
 
-        callback(url);
     }
 
     function getTabSource(url,callback){
+        console.log("getTabSource entered:");
         var hostName = getHostName(url);
         var path = getPath(url);
-        callback(hostName, path);
+        console.log("hostname:", hostName);
+        console.log("pathname", path);
+        return callback(hostName, path);
     }
 
     var getHostName = function (url) {
+        console.log("getHostName entered:");
         try {
           return new URL(url).hostname.match(/(www[0-9]?\.)?(.+)/i)[2];
         } catch (e) {
@@ -42,6 +44,7 @@ $(function () {
       }
       
       var getPath = function (url) {
+        console.log("getPath entered:");
         try {
           return new URL(url).pathname;
         } catch (e) {
