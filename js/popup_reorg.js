@@ -1,17 +1,23 @@
 //JQuery function
-$(function () {
-
+$( document ).ready(function() {
+    console.log("0");
     // ------------START URL FUNCTION -------------
     //add event listener
-    document.addEventListener('DOMContentLoaded', function(){
-        getCurrentTabUrl(function(url){
-            getTabSource(url, function(hostName, pathName){
+        console.log("1");
+        var globalurl = "";
+        getCurrentTabUrl(function(globalurl){
+            console.log("2");
+            getTabSource(globalurl, function(hostName, pathName){
+                console.log("3");
                 if (hostName !== null && pathName!== null){
-                    pageLoad(hostName, pathName); 
+                    console.log("4");
+                    pageLoad(hostName, pathName);
+                    console.log("5");
                 }
             });
         });
-    });
+
+
 
     function getCurrentTabUrl(callback){
         var queryInfo = {
@@ -19,12 +25,12 @@ $(function () {
             currentWindow: true
         };
 
-        browser.tabs.query(queryInfo, function(tabs){
-            var tab = tab[0];
-            var url = tab.url;
+        chrome.tabs.query(queryInfo, function(tabs){
+            globalurl = tabs[0].url;
+            console.log(globalurl);
         });
 
-        callback(url);
+        callback(globalurl);
     }
 
     function getTabSource(url,callback){
@@ -33,9 +39,9 @@ $(function () {
         callback(hostName, path);
     }
 
-    var getHostName = function (url) {
+    var getHostName() {
         try {
-          return new URL(url).hostname.match(/(www[0-9]?\.)?(.+)/i)[2];
+          return new URL(globalurl).hostname.match(/(www[0-9]?\.)?(.+)/i)[2];
         } catch (e) {
           return null; // Invalid URL
         }
@@ -218,5 +224,5 @@ $(function () {
     $('#minus-button').click(subtractUserRating);
     $('#submit-button').click(userSubmitsRating);
     // ------------ Finish Getting to Business -------------
-  });
-  
+});
+
