@@ -75,7 +75,7 @@ $( document ).ready(function() {
         console.log(currentArticle.hostnameKey);
         //is the source in the database?
         var sourceInDatabase = await checkForExistingSource(currentArticle.hostnameKey);
-        console.log(sourceInDatabase);
+        console.log("source in database",sourceInDatabase);
 
         if (sourceInDatabase){
             //source is in the database. Is the article in the database?
