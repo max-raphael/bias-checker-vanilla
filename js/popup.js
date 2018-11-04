@@ -6,8 +6,8 @@ $(function () {
     return window.firebase_database.ref('/articles');
   }
 
-  function bindValueToRating(data) {
-    data.
+  function bindValueToRating() {
+    currentArticleRef().has
     data = data.val();
     var currentRating = data.crowdSourceBias;
     var votes = data.votes;
