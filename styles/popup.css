@@ -23,6 +23,10 @@ body {
     display: none;
 }
 
+#divider1 {
+    display: none;
+}
+
 #plus-button {
     color: blue;
 }
