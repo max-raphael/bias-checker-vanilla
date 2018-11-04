@@ -28,6 +28,7 @@ $(function () {
     
     $('#app').show();
     $('#current-crowdsource-rating').text(ratingsExist ? currentRating : noRatingText);
+    $('#current-crowdsource-rating').css("color", getRatingColor(currentRating));
     if (ratingsExist){
       $('#current-vote-count').text(votes + 'have been submitted');
     }
@@ -36,6 +37,24 @@ $(function () {
   function currentArticleRef() {
     const currentArticleStr = moment().format('YYYY-MM-DD'); // here
     return firebaseRef().child(currentArticleStr);
+  }
+
+  function getRatingColor(rating){
+    if (rating < -7){
+      return "Navy";
+    } else if (rating < -4){
+      return "Blue";
+    } else if ( rating < 0){
+      return "LightSkyBlue";
+    } else if (rating == 0) {
+      return "Green";
+    } else if (rating < 4){
+      return "Salmon";
+    } else if (rating < 7){
+      return "Red";
+    } else {
+      return "DarkRed";
+    }
   }
 
   function updateRatingOnFirebase(rating) {
@@ -56,11 +75,15 @@ $(function () {
   }
 
   function addUserRating() {
-    currentUserRating = currentUserRating + 0.5;
+    if (currentUserRating <= 9.5){
+      currentUserRating = currentUserRating + 0.5;
+    }
   }
 
   function subtractUserRating() {
-    currentUserRating = currentUserRating - 0.5;
+    if (currentUserRating >= -9.5){
+      currentUserRating = currentUserRating - 0.5;
+    }
   }
 
   function userSubmitsRating() {
