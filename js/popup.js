@@ -44,7 +44,7 @@ $(function () {
           $('#current-vote-count').text(data.val() + 'votes have been submitted');
           //get current crowdsourced score- dispaly + set color
           currentArticleRef().child(crowdSourceBias).once("value").then(function(crowd_data){
-            $('#current-crowdsource-rating').text(crowd_data.val());
+            $('#current-crowdsource-rating').text(getAbsValue(crowd_data.val()));
             $('#article-label').text("This article's crowdsourced bias score is: ");
             $('#current-crowdsource-rating').css("color", getRatingColor(crowd_data.val()));
           });
@@ -53,6 +53,10 @@ $(function () {
         }
       });
     }
+  }
+
+  function getAbsValue(rating){
+    return ((rating >= 0) ? rating : (-1 * rating));
   }
 
   function currentArticleRef() {
