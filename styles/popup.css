@@ -1,10 +1,22 @@
 body {
-    width: 200px;
+    width: 400px;
     height: 200px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.text-right {
+    padding-left: 10px;
+    text-align: left;
 }
 
 .change-button {
     cursor: pointer;
+}
+
+.image-container {
+    margin: 20px 0 30px 0;
+    text-align: center;
+    align-content: center;
 }
 
 #app {
@@ -12,9 +24,20 @@ body {
 }
 
 #plus-button {
-    color: darkgreen;
+    color: blue;
 }
 
 #minus-button {
     color: orangered;
+}
+
+.divider {
+    height: 2px;
+    background-color: grey;
+    text-align: center;
+    align-content: center;
+}
+
+h3 {
+    margin-bottom: 20px;
 }
