@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+<head>
+  <title>Bias Checker</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- Start Vendor Scripts -->
+  <script
+          src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"
+          integrity="sha256-Gn7MUQono8LUxTfRA0WZzJgTua52Udm1Ifrk5421zkA="
+          crossorigin="anonymous">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!-- Finish Vendor Scripts -->
+
+
+  <!-- Start Vendor Stylesheets -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        crossorigin="anonymous">
+  <!-- Finish Vendor Stylesheets -->
+
+  <!-- Start App Stylesheets -->
+  <link rel="stylesheet" href="styles/popup.css">
+  <!-- Finish App Stylesheets -->
+
+  <!-- Start App Scripts-->
+  <script type="text/javascript" src="js/firebase_setup.js"></script>
+  <script src="js/popup.js"></script>
+  <!-- Finish App Scripts-->
+</head>
+<body>
+<div id="app" class="container">
+  <!-- Start Plus Button-->
+  <h3>Welcome to Bias Checker!</h3>
+  <div class="row">
+      <p> This source's bias score is: </p>
+      <h3 class="text-center"></h3>
+  </div>
+  <div class="row">
+      <p> This source's crowdsourced bias score is: </p>
+      <h3 class="text-center"></h3>
+  </div>
+  <h3 class="text-center"> Add your input:</h3>
+  <div class="row">
+    <div class="col-xs-12">
+      <h1 class="text-center change-button">
+        <span class="glyphicon glyphicon-plus-sign" id="plus-button" aria-hidden="true"></span>
+      </h1>
+    </div>
+  </div>
+  <!-- Finish Plus Button-->
+
+  <!-- Start Calories List-->
+  <div class="row">
+    <div class="col-xs-12">
+      <h6 class="text-center">
+        <em>Current Crowdsourced Bias Rating</em>
+      </h6>
+      <h2 class="text-center"></h2>
+      <p class="text-center"></p>
+    </div>
+  </div>
+  <!-- Finish Calories List-->
+
+  <!-- Start Minus Button-->
+  <div class="row">
+    <div class="col-xs-12">
+      <h1 class="text-center change-button">
+        <span class="glyphicon glyphicon-minus-sign" id="minus-button" aria-hidden="true"></span>
+      </h1>
+    </div>
+  </div>
+  <!-- Finish Minus Button-->
+
+</div>
+</body>
+</html>
+

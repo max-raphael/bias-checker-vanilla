@@ -1,0 +1,13 @@
+{
+  "manifest_version" : 2,
+  "name" : "Bias Checker",
+  "description" : "Allows you to check the bias of news articles",
+  "version" : "1.0",
+
+  "browser_action" :{
+    "default_icon" : "images/Hackathon.png",
+    "default_popup" : "popup.html",
+    "default_title" : "Check the Bias!"
+  },
+  "content_security_policy" : "script-src 'self' https://www.gstatic.com/ https://ajax.googleapis.com https://cdnjs.cloudflare.com https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
+}
