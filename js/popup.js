@@ -1,10 +1,10 @@
 $(function () {
-  var url="https://firebase.google.com/docs/database/rest/retrieve-data";
-  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+  var url=chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
     url = tabs[0].url;
     console.log(url);
+    return url;
   });
-  const myUrl = new URL(url);
+  const myUrl = new URL(url, base=String);
   function processUrl(){
     var myHostname = myUrl.hostname;
     var hostnameKey = myHostname.replace(/\.|$|\[|]|#|\//g, '');
