@@ -1,4 +1,14 @@
 $(function () {
+  // firebase.database().ref('/articles/').once('value').then(function(snapshot) {
+  //   var username = (snapshot.val());
+  //   console.log(username);
+  // });
+  
+  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    var url = tabs[0].url;
+    console.log(url);
+    document.getElementById("myText").innerHTML = url;
+  });
 
   var currentUserRating = 0;
   // ------------ Start Utility Functions -------------
@@ -7,7 +17,7 @@ $(function () {
   }
 
   function bindValueToRating() {
-    currentArticleRef().has
+    //currentArticleRef().has
     data = data.val();
     var currentRating = data.crowdSourceBias;
     var votes = data.votes;
