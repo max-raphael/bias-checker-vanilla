@@ -32,16 +32,16 @@
   <body id="body">
     <div class="container">
       <div class="item-container">
-          <img src="images/Animation.png" height="80" width="80">
+          <img src="images/Animation.png" height="60" width="60">
       </div>
       <h3 class="text-center">Welcome to Bias Checker!</h3>
-      <div class="row">
-          <p class="text-center" id="source-label"></p>
-          <h3 class="text-center" id="host-bias"></h3>
+      <div class="horizontal-box">
+          <p class="text-right" id="source-label"></p>
+          <p class=" score" id="host-bias"></p>
       </div>
-      <div class="row">
-          <p class="text-center" id="article-label"></p>
-          <h3 class="text-center"></h3>
+      <div class="horizontal-box">
+          <p class="text-right" id="article-label"></p>
+          <p class="score" id="current-crowdsource-rating-large"></p>
       </div>
       <div class="divider" id="divider1"></div>
       <h3 class="text-center" id="add-input"></h3>
@@ -61,7 +61,7 @@
       <div class="row" id="bottom">
         <div class="col-xs-12">
           <h6 class="text-center">
-            <p id="current-crowdsource-rating"></p>
+            <p class="score" id="current-crowdsource-rating"></p>
             <p id="current-vote-count"></p>
           </h6>
           <h2 class="text-center"></h2>
