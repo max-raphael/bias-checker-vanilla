@@ -163,10 +163,31 @@ $(function () {
         return crowdSourceScore; 
     }
 
+    function convertHostBias(hostBias){
+      if (hostBias == -10){
+        return "Often liberal"
+      }
+      if (hostBias == -5){
+        return "Leans liberal"
+      }
+      if (hostBias == 0){
+        return "Neutral"
+      }
+      if (hostBias == 5){
+        return "Leans conservative"
+      }
+      if (hostBias == 10){
+        return "Often conservative"
+      } 
+      return "nothing"
+  }
+
     function bindExistingArticle(hostBias, votes, crowdSourceScore){
         $('#app').show();
         $('#source-label').text("This publication's bias score is: ");
-        $('#host-bias').text(hostBias);
+        $('#host-bias').text(convertHostBias(hostBias));
+        $('#host-bias').css("color", getRatingColor(hostBias));
+        $('#host-bias').css("font-size", 15);
         $('#current-vote-count').text(votes + ' votes have been submitted');
         $('#divider1').show();
         $('#article-label').text("This article's crowdsourced bias score is: ");
@@ -183,9 +204,9 @@ $(function () {
 
     function getRatingColor(rating){
         if (rating < -7){
-          return "Navy";
-        } else if (rating < -4){
           return "Blue";
+        } else if (rating < -4){
+          return "Navy";
         } else if ( rating < 0){
           return "LightSkyBlue";
         } else if (rating == 0) {
@@ -211,11 +232,14 @@ $(function () {
     function updateRatingOnFirebase(rating) {
       var currentRatingVal = 0;
       var ratingCountVal = 0;
+      console.log("hello there friend")
       currentArticleRef().child(crowdSourceBias).once('value').then(function(data){
         currentArticleRef().child(votes).once('value'.then(function(data_count) {
           currentRatingVal = data.val();
           ratingCountVal = data_count.val();
+          console.log(currentRatingVal);
           currentRatingVal.set(calculateNewRating(currentRatingVal,rating,ratingCountVal + 1));
+          console.log(currentRatingVal);
           ratingCountVal.set(ratingCountVal+1);
         }));
       });

@@ -33,11 +33,11 @@ body {
 }
 
 #plus-button {
-    color: black;
+    color: red;
 }
 
 #minus-button {
-    color: black;
+    color: blue;
 }
 .score {
     font-size: 20px;
